@@ -2,7 +2,7 @@ package scapi.sigma
 
 import java.security.SecureRandom
 
-import akka.actor.{Actor}
+import akka.actor.Actor
 import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.dlog.{SigmaDlogCommonInput, SigmaDlogVerifierComputation}
 import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.utility.SigmaProtocolMsg
 import edu.biu.scapi.primitives.dlog.GroupElement

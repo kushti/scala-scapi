@@ -22,10 +22,10 @@ object SigmaProtocolExample extends App {
   val sys = ActorSystem("SigmaProtocolExample")
 
   val dlog = new MiraclDlogECF2m("K-233")
-  val qMinusOne = dlog.getOrder().subtract(BigInteger.ONE)
+  val qMinusOne = dlog.getOrder.subtract(BigInteger.ONE)
   val random = new SecureRandom()
   val r = BigIntegers.createRandomInRange(BigInteger.ZERO, qMinusOne, random)
-  val h = dlog.exponentiate(dlog.getGenerator(), r)
+  val h = dlog.exponentiate(dlog.getGenerator, r)
 
   val t = 4
 

@@ -1,6 +1,5 @@
 package scapi
 
-
 import java.math.BigInteger
 import java.security.SecureRandom
 import org.bouncycastle.util.BigIntegers
@@ -16,8 +15,8 @@ object QuickstartDlog extends App{
   val random = new SecureRandom()
 
   // get the group generator and order
-  val g = dlog.getGenerator()
-  val q = dlog.getOrder()
+  val g = dlog.getGenerator
+  val q = dlog.getOrder
   val qMinusOne = q.subtract(BigInteger.ONE)
 
   // create a random exponent r
