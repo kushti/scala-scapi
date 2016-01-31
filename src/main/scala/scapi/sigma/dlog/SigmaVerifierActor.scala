@@ -1,4 +1,4 @@
-package scapi.sigma
+package scapi.sigma.dlog
 
 import java.security.SecureRandom
 
@@ -7,16 +7,16 @@ import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.dlog.{SigmaDlogCommon
 import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.utility.SigmaProtocolMsg
 import edu.biu.scapi.primitives.dlog.GroupElement
 import edu.biu.scapi.primitives.dlog.miracl.MiraclDlogECF2m
-import scapi.sigma.SigmaProtocolMessages.{SecondMessage, RandomChallenge, FirstMessage}
+import scapi.sigma.dlog.SigmaProtocolMessages.{FirstMessage, RandomChallenge, SecondMessage}
 
 
-class SigmaVerifierActor(t:Int, h:GroupElement) extends Actor {
+class SigmaVerifierActor(t: Int, h: GroupElement) extends Actor {
   val dlog = new MiraclDlogECF2m("K-233")
 
   val verifierComputation = new SigmaDlogVerifierComputation(dlog, t, new SecureRandom())
   val input = new SigmaDlogCommonInput(h)
 
-  var a:SigmaProtocolMsg = _
+  var a: SigmaProtocolMsg = _
 
   override def receive = {
     case FirstMessage(am) =>
@@ -27,6 +27,6 @@ class SigmaVerifierActor(t:Int, h:GroupElement) extends Actor {
 
     case SecondMessage(z) =>
       val result = verifierComputation.verify(input, a, z)
-      println("Verification result: "+ result)
+      println("Verification result: " + result)
   }
 }

@@ -1,17 +1,17 @@
-package scapi.sigma
+package scapi.sigma.dlog
 
 import java.math.BigInteger
 import java.security.SecureRandom
 
-import akka.actor.{ActorRef, Actor}
-import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.dlog.{SigmaDlogProverInput, SigmaDlogProverComputation}
+import akka.actor.{Actor, ActorRef}
+import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.dlog.{SigmaDlogProverComputation, SigmaDlogProverInput}
 import edu.biu.scapi.primitives.dlog.GroupElement
 import edu.biu.scapi.primitives.dlog.miracl.MiraclDlogECF2m
 import org.bouncycastle.util.BigIntegers
-import scapi.sigma.SigmaProtocolMessages.{FirstMessage, SecondMessage, RandomChallenge, StartInteraction}
+import scapi.sigma.dlog.SigmaProtocolMessages.{FirstMessage, RandomChallenge, SecondMessage, StartInteraction}
 
 
-class SigmaProverActor(t:Int, h:GroupElement, verifierActor: ActorRef) extends Actor {
+class SigmaProverActor(t: Int, h: GroupElement, verifierActor: ActorRef) extends Actor {
   val dlog = new MiraclDlogECF2m("K-233")
 
   val proverComputation = new SigmaDlogProverComputation(dlog, t, new SecureRandom())
@@ -24,7 +24,6 @@ class SigmaProverActor(t:Int, h:GroupElement, verifierActor: ActorRef) extends A
       val input = new SigmaDlogProverInput(h, w)
       val a = proverComputation.computeFirstMsg(input)
       verifierActor ! FirstMessage(a)
-
 
     case RandomChallenge(challenge) =>
       val z = this.proverComputation.computeSecondMsg(challenge)
