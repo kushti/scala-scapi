@@ -1,4 +1,4 @@
-package scapi.sigma.dlog
+package scapi.sigma
 
 import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.utility.SigmaProtocolMsg
 

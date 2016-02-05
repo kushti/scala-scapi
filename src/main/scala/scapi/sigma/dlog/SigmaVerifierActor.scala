@@ -7,7 +7,8 @@ import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.dlog.{SigmaDlogCommon
 import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.utility.SigmaProtocolMsg
 import edu.biu.scapi.primitives.dlog.GroupElement
 import edu.biu.scapi.primitives.dlog.miracl.MiraclDlogECF2m
-import scapi.sigma.dlog.SigmaProtocolMessages.{FirstMessage, RandomChallenge, SecondMessage}
+import scapi.sigma.SigmaProtocolMessages
+import SigmaProtocolMessages.{FirstMessage, RandomChallenge, SecondMessage}
 
 
 class SigmaVerifierActor(t: Int, h: GroupElement) extends Actor {

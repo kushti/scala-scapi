@@ -8,7 +8,8 @@ import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.dlog.{SigmaDlogProver
 import edu.biu.scapi.primitives.dlog.GroupElement
 import edu.biu.scapi.primitives.dlog.miracl.MiraclDlogECF2m
 import org.bouncycastle.util.BigIntegers
-import scapi.sigma.dlog.SigmaProtocolMessages.{FirstMessage, RandomChallenge, SecondMessage, StartInteraction}
+import scapi.sigma.SigmaProtocolMessages
+import SigmaProtocolMessages.{FirstMessage, RandomChallenge, SecondMessage, StartInteraction}
 
 
 class SigmaProverActor(t: Int, h: GroupElement, verifierActor: ActorRef) extends Actor {
