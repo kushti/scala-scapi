@@ -4,7 +4,6 @@ import java.math.BigInteger
 import java.security.SecureRandom
 
 import akka.actor.Actor
-import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.damgardJurikProduct.{SigmaDJProductSecondMsg, SigmaDJProductFirstMsg, SigmaDJProductCommonInput}
 import scapi.sigma.SigmaProtocolMessages.RandomChallenge
 
 
