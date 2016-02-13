@@ -41,7 +41,7 @@ class Verifier(protocolParams: ProtocolParams, commonInput: CommonInput) extends
        t must be less than a third of the length of the public key n. */
     val modulus = commonInput.publicKey.getModulus
     val third: Int = modulus.bitLength / 3
-    require(protocolParams.soundnessParams < third, "t must be less than a third of the length of the public key n")
+    require(protocolParams.soundness < third, "t must be less than a third of the length of the public key n")
 
 
     var verified: Boolean = true
@@ -83,7 +83,7 @@ class Verifier(protocolParams: ProtocolParams, commonInput: CommonInput) extends
   var firstMessage: Option[SigmaDJProductFirstMsg] = None
 
   val challenge = {
-    val c = new Array[Byte](protocolParams.soundnessParams / 8)
+    val c = new Array[Byte](protocolParams.soundness / 8)
     new SecureRandom().nextBytes(c)
     c
   }

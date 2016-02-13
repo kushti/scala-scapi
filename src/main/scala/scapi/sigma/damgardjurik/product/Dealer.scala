@@ -13,7 +13,7 @@ import scapi.sigma.damgardjurik.product.Prover.SendFirstMessage
 
 class Dealer extends Actor {
 
-  lazy val protocolParams = ProtocolParams(soundnessParams = 40, lengthParameter = 1)
+  lazy val protocolParams = ProtocolParams(soundness = 40, lengthParameter = 1)
 
   val b1 = new BigInteger("1000")
   val b2 = new BigInteger("2000")

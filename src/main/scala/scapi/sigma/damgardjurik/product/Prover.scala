@@ -21,8 +21,8 @@ class Prover(protocolParams: ProtocolParams,
   val modulus = commonInput.publicKey.getModulus
 
   val third = modulus.bitLength / 3
-  require(protocolParams.soundnessParams < third,
-    s"soundnessParams must be less than a third of the length of the public key n(${modulus.bitLength})")
+  require(protocolParams.soundness < third,
+    s"soundness must be less than a third of the length of the public key n(${modulus.bitLength})")
 
   private val n: BigInteger = modulus
 

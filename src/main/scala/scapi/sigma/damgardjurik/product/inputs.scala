@@ -9,8 +9,8 @@ import edu.biu.scapi.midLayer.ciphertext.BigIntegerCiphertext
 import edu.biu.scapi.midLayer.plaintext.BigIntegerPlainText
 
 
-//soundnessParams = 40 in ScAPI by default
-case class ProtocolParams(soundnessParams: Int, lengthParameter: Int)
+//soundness = 40 in ScAPI by default
+case class ProtocolParams(soundness: Int, lengthParameter: Int)
 
 case class SigmaDJProductFirstMsg(a1: BigInteger, a2: BigInteger) extends SigmaProtocolMsg
 
