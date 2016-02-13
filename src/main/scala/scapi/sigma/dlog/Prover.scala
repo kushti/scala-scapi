@@ -12,7 +12,7 @@ import scapi.sigma.SigmaProtocolMessages
 import SigmaProtocolMessages.{FirstMessage, RandomChallenge, SecondMessage, StartInteraction}
 
 
-class SigmaProverActor(t: Int, h: GroupElement, verifierActor: ActorRef) extends Actor {
+class Prover(t: Int, h: GroupElement, verifierActor: ActorRef) extends Actor {
   val dlog = new MiraclDlogECF2m("K-233")
 
   val proverComputation = new SigmaDlogProverComputation(dlog, t, new SecureRandom())

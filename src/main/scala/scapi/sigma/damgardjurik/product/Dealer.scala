@@ -36,9 +36,6 @@ class Dealer extends Actor {
   lazy val commonInput = CommonInput(pubKey, c1, c2, c3)
   lazy val proverInput = ProverInput(privKey, x1, x2)
 
-  println("Common input: " + commonInput)
-  println("Prover input: " + proverInput)
-
   val verifier = context.actorOf(Props(classOf[Verifier], protocolParams, commonInput))
   val prover = context.actorOf(Props(classOf[Prover], protocolParams, commonInput, proverInput, verifier))
 

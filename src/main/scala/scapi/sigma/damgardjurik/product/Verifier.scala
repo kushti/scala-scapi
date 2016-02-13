@@ -97,6 +97,5 @@ class Verifier(protocolParams: ProtocolParams, commonInput: CommonInput) extends
     case s:SigmaDJProductSecondMsg =>
       val isProduct = verify(commonInput, firstMessage.get, s, challenge)
       println(s"Is product: $isProduct")
-
   }
 }

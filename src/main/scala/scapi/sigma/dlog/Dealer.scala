@@ -19,7 +19,7 @@ import SigmaProtocolMessages.StartInteraction
     3. A second message from the prover.
   */
 
-object SigmaProtocolExample extends App {
+object Dealer extends App {
   val sys = ActorSystem("SigmaProtocolExample")
 
   val dlog = new MiraclDlogECF2m("K-233")
@@ -29,8 +29,8 @@ object SigmaProtocolExample extends App {
 
   val t = 4
 
-  val verifier = sys.actorOf(Props(classOf[SigmaVerifierActor], t, h))
-  val prover = sys.actorOf(Props(classOf[SigmaProverActor], t, h, verifier))
+  val verifier = sys.actorOf(Props(classOf[Verifier], t, h))
+  val prover = sys.actorOf(Props(classOf[Prover], t, h, verifier))
 
   prover ! StartInteraction
 }

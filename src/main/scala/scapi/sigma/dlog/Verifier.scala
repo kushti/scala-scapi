@@ -11,7 +11,7 @@ import scapi.sigma.SigmaProtocolMessages
 import SigmaProtocolMessages.{FirstMessage, RandomChallenge, SecondMessage}
 
 
-class SigmaVerifierActor(t: Int, h: GroupElement) extends Actor {
+class Verifier(t: Int, h: GroupElement) extends Actor {
   val dlog = new MiraclDlogECF2m("K-233")
 
   val verifierComputation = new SigmaDlogVerifierComputation(dlog, t, new SecureRandom())
