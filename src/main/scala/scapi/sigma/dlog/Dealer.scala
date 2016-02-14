@@ -6,8 +6,7 @@ import java.security.SecureRandom
 import akka.actor.{ActorSystem, Props}
 import edu.biu.scapi.primitives.dlog.miracl.MiraclDlogECF2m
 import org.bouncycastle.util.BigIntegers
-import scapi.sigma.SigmaProtocolMessages
-import SigmaProtocolMessages.StartInteraction
+import scapi.sigma.SigmaProtocolMessages.StartInteraction
 
 /**
   * Sigma Protocols are a basic building block for Zero-knowledge proofs,
@@ -20,17 +19,31 @@ import SigmaProtocolMessages.StartInteraction
   */
 
 object Dealer extends App {
+  //adding Miracl to libraries being loaded
+  System.setProperty("java.library.path", System.getProperty("java.library.path")+":/usr/lib/scapi")
+  val sysPathsField = classOf[ClassLoader].getDeclaredField("sys_paths")
+  sysPathsField.setAccessible(true)
+  sysPathsField.set(null, null)
+  //println(System.getProperty("java.library.path"))
+  System.loadLibrary("MiraclJavaInterface")
+
   val sys = ActorSystem("SigmaProtocolExample")
+
+  val soundness = 40
+  val protocolParams = ProtocolParams(soundness)
+
+  val random = new SecureRandom()
 
   val dlog = new MiraclDlogECF2m("K-233")
   val qMinusOne = dlog.getOrder.subtract(BigInteger.ONE)
-  val r = BigIntegers.createRandomInRange(BigInteger.ZERO, qMinusOne, new SecureRandom())
-  val h = dlog.exponentiate(dlog.getGenerator, r)
+  val w = BigIntegers.createRandomInRange(BigInteger.ZERO, qMinusOne, random)
+  val h = dlog.exponentiate(dlog.getGenerator, w)
 
-  val t = 4
+  val commonInput = CommonInput(protocolParams, dlog, h)
+  val proverInput = ProverInput(w)
 
-  val verifier = sys.actorOf(Props(classOf[Verifier], t, h))
-  val prover = sys.actorOf(Props(classOf[Prover], t, h, verifier))
+  val verifier = sys.actorOf(Props(classOf[Verifier], commonInput))
+  val prover = sys.actorOf(Props(classOf[Prover], commonInput, proverInput, verifier))
 
   prover ! StartInteraction
 }

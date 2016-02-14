@@ -8,9 +8,12 @@ import edu.biu.scapi.primitives.dlog.openSSL.OpenSSLDlogECF2m
 
 object QuickstartDlog extends App{
   System.setProperty("java.library.path", System.getProperty("java.library.path")+":/usr/lib/scapi")
+  val sysPathsField = classOf[ClassLoader].getDeclaredField("sys_paths")
+  sysPathsField.setAccessible(true)
+  sysPathsField.set(null, null)
+  //println(System.getProperty("java.library.path"))
   System.loadLibrary("OpenSSLJavaInterface")
 
-  println(System.getProperty("java.library.path"))
   val dlog = new OpenSSLDlogECF2m("K-233")
   val random = new SecureRandom()
 
