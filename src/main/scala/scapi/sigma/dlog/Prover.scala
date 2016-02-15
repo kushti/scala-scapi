@@ -36,6 +36,8 @@ class Prover(commonInput: CommonInput,
   def beforeSecondMessage(r:BigInteger): Receive  = {
     case RandomChallenge(challenge) =>
       //todo: check challenge length
+      require(challenge.length * 8 == commonInput.protocolParams.soundness, "wrong challenge length")
+
       //Compute z = (r+ew) mod q
       val q: BigInteger = dlog.getOrder
       val e: BigInteger = new BigInteger(1, challenge)
