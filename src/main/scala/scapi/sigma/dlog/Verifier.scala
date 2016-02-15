@@ -6,7 +6,6 @@ import java.security.SecureRandom
 import akka.actor.Actor
 import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.utility.{SigmaBIMsg, SigmaGroupElementMsg, SigmaProtocolMsg}
 import edu.biu.scapi.primitives.dlog.GroupElement
-import scapi.sigma.SigmaProtocolMessages
 import scapi.sigma.SigmaProtocolMessages.{FirstMessage, RandomChallenge, SecondMessage}
 
 

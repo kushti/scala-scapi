@@ -22,9 +22,9 @@ class Dealer extends Actor {
   val x1 = new BigIntegerPlainText(b1)
   val x2 = new BigIntegerPlainText(b2)
   val x3 = new BigIntegerPlainText(b3)
-  djEncScheme.setKey(keyPair.getPublic, keyPair.getPrivate)
   val djEncScheme = new ScDamgardJurikEnc()
   val keyPair = djEncScheme.generateKey(new DJKeyGenParameterSpec())
+  djEncScheme.setKey(keyPair.getPublic, keyPair.getPrivate)
   val pubKey = keyPair.getPublic.asInstanceOf[DamgardJurikPublicKey]
   val privKey = keyPair.getPrivate.asInstanceOf[DamgardJurikPrivateKey]
   val c1 = djEncScheme.encrypt(x1).asInstanceOf[BigIntegerCiphertext]

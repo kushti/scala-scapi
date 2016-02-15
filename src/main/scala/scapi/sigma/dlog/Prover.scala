@@ -3,7 +3,7 @@ package scapi.sigma.dlog
 import java.math.BigInteger
 import java.security.SecureRandom
 
-import akka.actor.{Actor, ActorRef}
+import akka.actor.{Actor, ActorLogging, ActorRef}
 import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.utility.{SigmaBIMsg, SigmaGroupElementMsg}
 import edu.biu.scapi.primitives.dlog.GroupElement
 import org.bouncycastle.util.BigIntegers
@@ -12,7 +12,7 @@ import scapi.sigma.SigmaProtocolMessages.{FirstMessage, RandomChallenge, SecondM
 
 class Prover(commonInput: CommonInput,
              proverInput: ProverInput,
-             verifierActor: ActorRef) extends Actor {
+             verifierActor: ActorRef) extends Actor with ActorLogging {
 
   val dlog = commonInput.dlogGroup
   val w = proverInput.w
@@ -20,7 +20,7 @@ class Prover(commonInput: CommonInput,
 
   override def receive = beforeFirstMessage
 
-  def beforeFirstMessage: Receive = {
+  private def beforeFirstMessage: Receive = {
     case StartInteraction =>
       val qMinusOne = dlog.getOrder.subtract(BigInteger.ONE)
 
@@ -34,9 +34,8 @@ class Prover(commonInput: CommonInput,
       context become beforeSecondMessage(r)
   }
 
-  def beforeSecondMessage(r: BigInteger): Receive = {
+  private def beforeSecondMessage(r: BigInteger): Receive = {
     case RandomChallenge(challenge) =>
-      //todo: check challenge length
       require(challenge.length * 8 == commonInput.protocolParams.soundness, "wrong challenge length")
 
       //Compute z = (r+ew) mod q
@@ -45,5 +44,10 @@ class Prover(commonInput: CommonInput,
       val ew: BigInteger = e.multiply(w).mod(q)
       val z: BigInteger = r.add(ew).mod(q)
       verifierActor ! SecondMessage(new SigmaBIMsg(z))
+      context become finished
+  }
+
+  private def finished: Receive = {
+    case a: Any => log.warning(s"Got a message after protocol being finished: $a")
   }
 }
