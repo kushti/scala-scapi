@@ -39,7 +39,9 @@ case class ProverInput(privateKey: DamgardJurikPrivateKey,
   private lazy val m: BigInteger = n.modInverse(phiN)
 
   //ri = ci^m mod n
-  def r1(commonInput:CommonInput) = commonInput.c1.getCipher.modPow(m, n)
-  def r2(commonInput:CommonInput) = commonInput.c2.getCipher.modPow(m, n)
-  def r3(commonInput:CommonInput) = commonInput.c3.getCipher.modPow(m, n)
+  def r1(commonInput: CommonInput) = commonInput.c1.getCipher.modPow(m, n)
+
+  def r2(commonInput: CommonInput) = commonInput.c2.getCipher.modPow(m, n)
+
+  def r3(commonInput: CommonInput) = commonInput.c3.getCipher.modPow(m, n)
 }

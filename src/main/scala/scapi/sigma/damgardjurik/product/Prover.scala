@@ -16,14 +16,11 @@ class Prover(protocolParams: ProtocolParams,
              proverInput: ProverInput,
              verifier: ActorRef) extends Actor {
 
-  private val random = new SecureRandom()
-
   val modulus = commonInput.publicKey.getModulus
-
   val third = modulus.bitLength / 3
+  private val random = new SecureRandom()
   require(protocolParams.soundness < third,
     s"soundness must be less than a third of the length of the public key n(${modulus.bitLength})")
-
   private val n: BigInteger = modulus
 
   //Calculate N = n^s and N' = n^(s+1)
@@ -91,9 +88,9 @@ class Prover(protocolParams: ProtocolParams,
 
 object Prover {
 
-  case object SendFirstMessage
-
   case class SendSecondMessage(challenge: Array[Byte])
+
+  case object SendFirstMessage
 
 }
 

@@ -7,7 +7,7 @@ import akka.actor.Actor
 import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.utility.{SigmaBIMsg, SigmaGroupElementMsg, SigmaProtocolMsg}
 import edu.biu.scapi.primitives.dlog.GroupElement
 import scapi.sigma.SigmaProtocolMessages
-import SigmaProtocolMessages.{FirstMessage, RandomChallenge, SecondMessage}
+import scapi.sigma.SigmaProtocolMessages.{FirstMessage, RandomChallenge, SecondMessage}
 
 
 class Verifier(commonInput: CommonInput) extends Actor {
@@ -15,7 +15,9 @@ class Verifier(commonInput: CommonInput) extends Actor {
 
   require(commonInput.protocolParams.soundness % 8 == 0, "soundness must be fit in bytes")
 
-  def onfirstMessage:Receive = {
+  override def receive: Receive = onfirstMessage
+
+  def onfirstMessage: Receive = {
     case FirstMessage(a) =>
 
       val challenge = new Array[Byte](commonInput.protocolParams.soundness / 8)
@@ -24,7 +26,7 @@ class Verifier(commonInput: CommonInput) extends Actor {
       context become onSecondMessage(a, challenge)
   }
 
-  def onSecondMessage(a: SigmaProtocolMsg, challenge:Array[Byte]):Receive = {
+  def onSecondMessage(a: SigmaProtocolMsg, challenge: Array[Byte]): Receive = {
     case SecondMessage(z) =>
 
       //Get the element of the first message from the prover.
@@ -51,6 +53,4 @@ class Verifier(commonInput: CommonInput) extends Actor {
 
       println("Verification result: " + accepted)
   }
-
-  override def receive:Receive = onfirstMessage
 }

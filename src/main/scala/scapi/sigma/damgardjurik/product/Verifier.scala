@@ -10,21 +10,26 @@ import scapi.sigma.SigmaProtocolMessages.RandomChallenge
 class Verifier(protocolParams: ProtocolParams, commonInput: CommonInput) extends Actor {
 
 
-  private def areRelativelyPrime(n: BigInteger, c1: BigInteger, c2: BigInteger,
-                                 a1: BigInteger, a2: BigInteger,
-                                 z1: BigInteger, z2: BigInteger, z3: BigInteger): Boolean =
-    (c1.gcd(n) == BigInteger.ONE) &&
-      (c2.gcd(n) == BigInteger.ONE) &&
-      (c2.gcd(n) == BigInteger.ONE) &&
-      (a1.gcd(n) == BigInteger.ONE) &&
-      (a2.gcd(n) == BigInteger.ONE) &&
-      (z1.gcd(n) == BigInteger.ONE) &&
-      (z2.gcd(n) == BigInteger.ONE) &&
-      (z3.gcd(n) == BigInteger.ONE)
+  val challenge = {
+    val c = new Array[Byte](protocolParams.soundness / 8)
+    new SecureRandom().nextBytes(c)
+    c
+  }
+  var firstMessage: Option[SigmaDJProductFirstMsg] = None
+
+  override def receive: Receive = {
+    case f: SigmaDJProductFirstMsg =>
+      firstMessage = Some(f)
+      sender() ! RandomChallenge(challenge)
+
+    case s: SigmaDJProductSecondMsg =>
+      val isProduct = verify(commonInput, firstMessage.get, s, challenge)
+      println(s"Is product: $isProduct")
+  }
 
   /**
     * * Computes the verification of the protocol.<p>
-    * 	"ACC IFF c1,c2,c3,a1,a2,z1,z2,z3 are relatively prime to n <p>
+    * "ACC IFF c1,c2,c3,a1,a2,z1,z2,z3 are relatively prime to n <p>
 				AND c1^e*a1 = (1+n)^z1*z2^N mod N'<p>
 				AND (c2^z1)/(a2*c3^e) = z3^N mod N'".
 
@@ -35,7 +40,7 @@ class Verifier(protocolParams: ProtocolParams, commonInput: CommonInput) extends
   private def verify(commonInput: CommonInput,
                      a: SigmaDJProductFirstMsg,
                      z: SigmaDJProductSecondMsg,
-                     challenge: Array[Byte]):Boolean = {
+                     challenge: Array[Byte]): Boolean = {
 
     /* Checks the validity of the given soundness parameter.<p>
        t must be less than a third of the length of the public key n. */
@@ -80,21 +85,15 @@ class Verifier(protocolParams: ProtocolParams, commonInput: CommonInput) extends
     verified
   }
 
-  var firstMessage: Option[SigmaDJProductFirstMsg] = None
-
-  val challenge = {
-    val c = new Array[Byte](protocolParams.soundness / 8)
-    new SecureRandom().nextBytes(c)
-    c
-  }
-
-  override def receive: Receive = {
-    case f:SigmaDJProductFirstMsg =>
-      firstMessage = Some(f)
-      sender() ! RandomChallenge(challenge)
-
-    case s:SigmaDJProductSecondMsg =>
-      val isProduct = verify(commonInput, firstMessage.get, s, challenge)
-      println(s"Is product: $isProduct")
-  }
+  private def areRelativelyPrime(n: BigInteger, c1: BigInteger, c2: BigInteger,
+                                 a1: BigInteger, a2: BigInteger,
+                                 z1: BigInteger, z2: BigInteger, z3: BigInteger): Boolean =
+    (c1.gcd(n) == BigInteger.ONE) &&
+      (c2.gcd(n) == BigInteger.ONE) &&
+      (c2.gcd(n) == BigInteger.ONE) &&
+      (a1.gcd(n) == BigInteger.ONE) &&
+      (a2.gcd(n) == BigInteger.ONE) &&
+      (z1.gcd(n) == BigInteger.ONE) &&
+      (z2.gcd(n) == BigInteger.ONE) &&
+      (z3.gcd(n) == BigInteger.ONE)
 }

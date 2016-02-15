@@ -20,7 +20,7 @@ import scapi.sigma.SigmaProtocolMessages.StartInteraction
 
 object Dealer extends App {
   //adding Miracl to libraries being loaded
-  System.setProperty("java.library.path", System.getProperty("java.library.path")+":/usr/lib/scapi")
+  System.setProperty("java.library.path", System.getProperty("java.library.path") + ":/usr/lib/scapi")
   val sysPathsField = classOf[ClassLoader].getDeclaredField("sys_paths")
   sysPathsField.setAccessible(true)
   sysPathsField.set(null, null)

@@ -8,7 +8,7 @@ import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.utility.{SigmaBIMsg, 
 import edu.biu.scapi.primitives.dlog.GroupElement
 import org.bouncycastle.util.BigIntegers
 import scapi.sigma.SigmaProtocolMessages
-import SigmaProtocolMessages.{FirstMessage, RandomChallenge, SecondMessage, StartInteraction}
+import scapi.sigma.SigmaProtocolMessages.{FirstMessage, RandomChallenge, SecondMessage, StartInteraction}
 
 
 class Prover(commonInput: CommonInput,
@@ -19,7 +19,9 @@ class Prover(commonInput: CommonInput,
   val w = proverInput.w
   val random = new SecureRandom()
 
-  def beforeFirstMessage:Receive = {
+  override def receive = beforeFirstMessage
+
+  def beforeFirstMessage: Receive = {
     case StartInteraction =>
       val qMinusOne = dlog.getOrder.subtract(BigInteger.ONE)
 
@@ -33,7 +35,7 @@ class Prover(commonInput: CommonInput,
       context become beforeSecondMessage(r)
   }
 
-  def beforeSecondMessage(r:BigInteger): Receive  = {
+  def beforeSecondMessage(r: BigInteger): Receive = {
     case RandomChallenge(challenge) =>
       //todo: check challenge length
       require(challenge.length * 8 == commonInput.protocolParams.soundness, "wrong challenge length")
@@ -45,6 +47,4 @@ class Prover(commonInput: CommonInput,
       val z: BigInteger = r.add(ew).mod(q)
       verifierActor ! SecondMessage(new SigmaBIMsg(z))
   }
-
-  override def receive = beforeFirstMessage
 }
