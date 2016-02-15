@@ -6,7 +6,7 @@ import java.security.SecureRandom
 import akka.actor.Actor
 import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.utility.{SigmaBIMsg, SigmaGroupElementMsg, SigmaProtocolMsg}
 import edu.biu.scapi.primitives.dlog.GroupElement
-import scapi.sigma.SigmaProtocolMessages.{FirstMessage, RandomChallenge, SecondMessage}
+import scapi.sigma.SigmaProtocolMessages.{FirstMessage, RandomChallenge, SecondMessage, Transcript}
 
 
 class Verifier(commonInput: CommonInput) extends Actor {
@@ -50,6 +50,7 @@ class Verifier(commonInput: CommonInput) extends Actor {
 
       val accepted = dlog.isMember(h) && (left == right)
 
-      println("Verification result: " + accepted)
+      val transcript = Transcript(a, challenge, z, accepted)
+      println("Protocol transcript: " + transcript)
   }
 }

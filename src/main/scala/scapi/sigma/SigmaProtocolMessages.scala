@@ -4,6 +4,7 @@ import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.utility.SigmaProtocol
 
 
 object SigmaProtocolMessages {
+  type Challenge = Array[Byte]
 
   case class FirstMessage(s: SigmaProtocolMsg)
 
@@ -13,4 +14,5 @@ object SigmaProtocolMessages {
 
   case object StartInteraction
 
+  case class Transcript(a: SigmaProtocolMsg, e: Challenge, z: SigmaProtocolMsg, accepted: Boolean)
 }
