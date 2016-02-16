@@ -4,7 +4,7 @@ import java.math.BigInteger
 import java.security.SecureRandom
 
 import akka.actor.Actor
-import scapi.sigma.SigmaProtocolMessages.RandomChallenge
+import scapi.sigma.SigmaProtocol.RandomChallenge
 
 
 class Verifier(protocolParams: ProtocolParams, commonInput: CommonInput) extends Actor {

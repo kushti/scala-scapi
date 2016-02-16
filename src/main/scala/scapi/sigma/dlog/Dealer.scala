@@ -6,7 +6,7 @@ import java.security.SecureRandom
 import akka.actor.{ActorSystem, Props}
 import edu.biu.scapi.primitives.dlog.miracl.MiraclDlogECF2m
 import org.bouncycastle.util.BigIntegers
-import scapi.sigma.SigmaProtocolMessages.StartInteraction
+import scapi.sigma.SigmaProtocol.StartInteraction
 
 /**
   * Sigma Protocols are a basic building block for Zero-knowledge proofs,

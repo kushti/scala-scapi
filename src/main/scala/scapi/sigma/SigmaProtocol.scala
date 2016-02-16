@@ -3,7 +3,7 @@ package scapi.sigma
 import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.utility.SigmaProtocolMsg
 
 
-object SigmaProtocolMessages {
+object SigmaProtocol {
   type Challenge = Array[Byte]
 
   case class FirstMessage(s: SigmaProtocolMsg)

@@ -7,7 +7,7 @@ import akka.actor.{Actor, ActorLogging, ActorRef}
 import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.utility.{SigmaBIMsg, SigmaGroupElementMsg}
 import edu.biu.scapi.primitives.dlog.GroupElement
 import org.bouncycastle.util.BigIntegers
-import scapi.sigma.SigmaProtocolMessages.{FirstMessage, RandomChallenge, SecondMessage, StartInteraction}
+import scapi.sigma.SigmaProtocol.{FirstMessage, RandomChallenge, SecondMessage, StartInteraction}
 
 
 class Prover(commonInput: CommonInput,

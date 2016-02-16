@@ -7,7 +7,7 @@ import edu.biu.scapi.midLayer.asymmetricCrypto.encryption.{DJKeyGenParameterSpec
 import edu.biu.scapi.midLayer.asymmetricCrypto.keys.{DamgardJurikPrivateKey, DamgardJurikPublicKey}
 import edu.biu.scapi.midLayer.ciphertext.BigIntegerCiphertext
 import edu.biu.scapi.midLayer.plaintext.BigIntegerPlainText
-import scapi.sigma.SigmaProtocolMessages.StartInteraction
+import scapi.sigma.SigmaProtocol.StartInteraction
 import scapi.sigma.damgardjurik.product.Prover.SendFirstMessage
 
 
