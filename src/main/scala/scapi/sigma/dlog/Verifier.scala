@@ -6,7 +6,7 @@ import java.security.SecureRandom
 import akka.actor.Actor
 import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.utility.{SigmaBIMsg, SigmaGroupElementMsg, SigmaProtocolMsg}
 import edu.biu.scapi.primitives.dlog.GroupElement
-import scapi.sigma.SigmaProtocol.{FirstMessage, RandomChallenge, SecondMessage, Transcript}
+import scapi.sigma.SigmaProtocolFunctions.{FirstMessage, RandomChallenge, SecondMessage, Transcript}
 
 
 class Verifier(commonInput: CommonInput) extends Actor {
