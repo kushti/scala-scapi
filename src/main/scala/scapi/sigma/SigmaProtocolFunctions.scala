@@ -5,6 +5,17 @@ import java.security.SecureRandom
 import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.utility.SigmaProtocolMsg
 import scapi.sigma.SigmaProtocolFunctions.Challenge
 
+/*
+  Abstracting Sigma protocols
+  Functionality to get:
+  - Interactive Sigma protocols(via actors)
+  - Zero-knowledge proof from a Sigma protocol
+  - Non-interactive Sigma protocols
+  - Commitment from any Sigma protocol
+  - Signature from any Sigma protocol
+  - Json and ultra-compact binary serialization/deserialization
+ */
+
 trait SigmaProtocolTranscript[FM, SM] {
   val a: FM
   val e: Challenge
@@ -35,7 +46,7 @@ object SigmaProtocolFunctions {
 
   case class FirstMessage(s: SigmaProtocolMsg)
 
-  case class RandomChallenge(challenge: Array[Byte])
+  case class RandomChallenge(challenge: Challenge)
 
   case class SecondMessage(s: SigmaProtocolMsg)
 
