@@ -20,6 +20,12 @@ object QuickstartDlog extends App {
 
   // get the group generator and order
   val g = dlog.getGenerator
+
+  println(dlog.getGenerator)
+  println(dlog.getGenerator)
+  println(dlog.getGenerator)
+  println(dlog.getGenerator)
+
   val q = dlog.getOrder
   val qMinusOne = q.subtract(BigInteger.ONE)
 
@@ -28,6 +34,7 @@ object QuickstartDlog extends App {
 
   // exponentiate g in r to receive a new group element
   val g1 = dlog.exponentiate(g, r)
+
   // create a random group element
   val h = dlog.createRandomElement()
   // multiply elements

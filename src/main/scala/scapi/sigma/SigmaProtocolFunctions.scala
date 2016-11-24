@@ -3,7 +3,7 @@ package scapi.sigma
 import java.security.SecureRandom
 
 import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.utility.SigmaProtocolMsg
-import scapi.sigma.SigmaProtocolFunctions.Challenge
+//import scapi.sigma.SigmaProtocolFunctions.Challenge
 
 /*
   Abstracting Sigma protocols
@@ -14,9 +14,15 @@ import scapi.sigma.SigmaProtocolFunctions.Challenge
   - Commitment from any Sigma protocol
   - Signature from any Sigma protocol
   - Json and ultra-compact binary serialization/deserialization
- */
 
-trait SigmaProtocolTranscript[FM, SM] {
+
+trait SigmaProtocolCommonInput {
+  val soundness: Int
+}
+
+trait SigmaProtocolTranscript[CI <: SigmaProtocolCommonInput, FM, SM] {
+  val x: CI
+
   val a: FM
   val e: Challenge
   val z: SM
@@ -24,8 +30,9 @@ trait SigmaProtocolTranscript[FM, SM] {
   val accepted: Boolean
 }
 
-trait SigmaProtocolFunctions[FM, SM] {
-  val soundness: Int
+trait SigmaProtocolFunctions[CI] {
+  type FM
+  type SM
 
   def firstMessage(): FM
 
@@ -38,8 +45,15 @@ trait SigmaProtocolFunctions[FM, SM] {
     ch
   }
 
-  def simulate(): SigmaProtocolTranscript[FM, SM]
+  def simulate(): SigmaProtocolTranscript[CI, FM, SM]
 }
+
+trait SigmaProtocol[CI, PI]{
+
+}
+*/
+
+
 
 object SigmaProtocolFunctions {
   type Challenge = Array[Byte]
