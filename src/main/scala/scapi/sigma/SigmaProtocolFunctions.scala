@@ -3,7 +3,7 @@ package scapi.sigma
 import java.security.SecureRandom
 
 import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.utility.SigmaProtocolMsg
-//import scapi.sigma.SigmaProtocolFunctions.Challenge
+import scapi.sigma.SigmaProtocolFunctions.Challenge
 
 /*
   Abstracting Sigma protocols
@@ -14,23 +14,45 @@ import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.utility.SigmaProtocol
   - Commitment from any Sigma protocol
   - Signature from any Sigma protocol
   - Json and ultra-compact binary serialization/deserialization
+*/
 
+//todo: implement ring signature protocol of Groth et al.
 
-trait SigmaProtocolCommonInput {
+trait SigmaProtocol
+
+trait ZeroKnowledgeProofOfKnowledge[SP <: SigmaProtocol]
+
+trait SigmaProtocolCommonInput[SP <: SigmaProtocol] {
   val soundness: Int
 }
 
-trait SigmaProtocolTranscript[CI <: SigmaProtocolCommonInput, FM, SM] {
+trait SigmaProtocolPrivateInput[SP <: SigmaProtocol]
+
+
+trait Party[SP <: SigmaProtocol, CI <: SigmaProtocolCommonInput[SP]] {
+  val publicInput: CI
+}
+
+
+trait Prover[SP <: SigmaProtocol, CI <: SigmaProtocolCommonInput[SP], PI <: SigmaProtocolPrivateInput[SP]] extends Party[SP, CI] {
+  val privateInput: PI
+}
+
+trait Verifier[SP <: SigmaProtocol, CI <: SigmaProtocolCommonInput[SP]] extends Party[SP, CI]
+
+
+trait SigmaProtocolTranscript[SP <: SigmaProtocol, CI <: SigmaProtocolCommonInput[SP], FM, SM] {
   val x: CI
 
   val a: FM
   val e: Challenge
   val z: SM
 
-  val accepted: Boolean
+  def accepted: Boolean
 }
 
-trait SigmaProtocolFunctions[CI] {
+/*
+trait SigmaProtocolFunctions[CI <: SigmaProtocolCommonInput] {
   type FM
   type SM
 
@@ -38,20 +60,15 @@ trait SigmaProtocolFunctions[CI] {
 
   def secondMessage(): FM
 
-  lazy val challenge = {
-    require(soundness % 8 == 0, "soundness must be fit in bytes")
-    val ch = new Array[Byte](soundness / 8)
+  def challenge(commonInput: CI) = {
+    require(commonInput.soundness % 8 == 0, "soundness must be fit in bytes")
+    val ch = new Array[Byte](commonInput.soundness / 8)
     new SecureRandom().nextBytes(ch) //modifies challenge
     ch
   }
 
   def simulate(): SigmaProtocolTranscript[CI, FM, SM]
-}
-
-trait SigmaProtocol[CI, PI]{
-
-}
-*/
+}*/
 
 
 
