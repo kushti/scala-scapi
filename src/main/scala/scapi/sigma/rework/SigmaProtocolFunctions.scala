@@ -1,9 +1,9 @@
-package scapi.sigma
+package scapi.sigma.rework
 
 import java.security.SecureRandom
 
 import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.utility.SigmaProtocolMsg
-import scapi.sigma.SigmaProtocol.Challenge
+import scapi.sigma.rework.SigmaProtocol.Challenge
 
 /*
   Abstracting Sigma protocols
@@ -18,6 +18,9 @@ import scapi.sigma.SigmaProtocol.Challenge
 
 //todo: implement ring signature protocol of Groth et al.
 
+trait ProverMessage {
+  def bytes: Array[Byte]
+}
 
 trait FirstProverMessage[SP <: SigmaProtocol[SP]] extends ProverMessage
 trait SecondProverMessage[SP <: SigmaProtocol[SP]] extends ProverMessage
@@ -31,15 +34,6 @@ object SigmaProtocol{
   type Challenge = Array[Byte]
 }
 
-trait ProverMessage {
-  def bytes: Array[Byte]
-}
-
-trait ZeroKnowledgeProofOfKnowledge[SP <: SigmaProtocol[SP]]
-
-trait FiatShamir {
-  def askOracleInstantiation(ask: Array[Byte]): Array[Byte]
-}
 
 trait SigmaProtocolCommonInput[SP <: SigmaProtocol[SP]] {
   val soundness: Int
@@ -47,7 +41,9 @@ trait SigmaProtocolCommonInput[SP <: SigmaProtocol[SP]] {
 
 trait SigmaProtocolPrivateInput[SP <: SigmaProtocol[SP]]
 
-
+/**
+  * common interface for both Prover and Verifier
+  */
 trait Party[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP]] {
   val publicInput: CI
 }
@@ -60,13 +56,25 @@ trait Prover[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP], PI <: 
 trait InteractiveProver[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP], PI <: SigmaProtocolPrivateInput[SP]]
   extends Prover[SP, CI, PI]
 
-trait NonInteractiveProver[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP], PI <: SigmaProtocolPrivateInput[SP]]
-  extends Prover[SP, CI, PI] with FiatShamir
-
 trait SimulatingProver[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP]]{
   val challenge: Challenge
 }
 
+
+trait ZeroKnowledgeProofOfKnowledge[SP <: SigmaProtocol[SP]]
+
+trait FiatShamir {
+  def askOracleInstantiation(ask: Array[Byte]): Array[Byte]
+}
+trait NonInteractiveProver[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP], PI <: SigmaProtocolPrivateInput[SP]]
+  extends Prover[SP, CI, PI] with FiatShamir
+
+
+trait SigmaSignature[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP]] extends FiatShamir {
+  val message: Array[Byte]
+
+  def verify(): Boolean
+}
 
 trait Verifier[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP]] extends Party[SP, CI] {
   def challenge = {
@@ -77,7 +85,13 @@ trait Verifier[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP]] exte
   }
 }
 
-
+/**
+  * Sigma Protocol transcript enough for verification
+  * @tparam SP
+  * @tparam CI
+  * @tparam FM
+  * @tparam SM
+  */
 trait SigmaProtocolTranscript[
   SP <: SigmaProtocol[SP],
   CI <: SigmaProtocolCommonInput[SP],
@@ -92,12 +106,6 @@ trait SigmaProtocolTranscript[
   val z: SM
 
   def accepted: Boolean
-}
-
-trait SigmaSignature[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP]] extends FiatShamir {
-  val message: Array[Byte]
-
-  def verify(): Boolean
 }
 
 

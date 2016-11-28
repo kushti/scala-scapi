@@ -5,7 +5,7 @@ import java.security.SecureRandom
 
 import akka.actor.{Actor, ActorRef}
 import org.bouncycastle.util.BigIntegers
-import scapi.sigma.SigmaProtocolFunctions.{RandomChallenge, StartInteraction}
+import scapi.sigma.rework.SigmaProtocolFunctions.{RandomChallenge, StartInteraction}
 
 
 /**
