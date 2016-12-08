@@ -36,6 +36,7 @@ trait SigmaProtocol[SP <: SigmaProtocol[SP]] {
   type Z <: SecondProverMessage[SP]
 }
 
+case class Transcript[SP <: SigmaProtocol[SP]](firstProverMessage: SP#A, challenge: Challenge, secondProverMessage: SP#Z)
 
 trait SigmaProtocolCommonInput[SP <: SigmaProtocol[SP]] {
   val soundness: Int
@@ -57,6 +58,9 @@ trait Prover[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP], PI <: 
 
 trait InteractiveProver[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP], PI <: SigmaProtocolPrivateInput[SP]]
   extends Prover[SP, CI, PI]
+
+trait ActorProver[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP], PI <: SigmaProtocolPrivateInput[SP]]
+  extends InteractiveProver[SP, CI, PI]
 
 trait SimulatingProver[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP]] {
   val challenge: Challenge
