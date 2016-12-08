@@ -61,7 +61,7 @@ class Prover(protocolParams: ProtocolParams,
 
     case RandomChallenge(challenge) =>
       //todo: check challenge length
-      self ! Prover.SendSecondMessage(challenge)
+      self ! Prover.SendSecondMessage(challenge.bytes)
 
     case Prover.SendSecondMessage(challenge) =>
       //Compute z1 = e*x1+d mod N

@@ -36,11 +36,11 @@ class Prover(commonInput: CommonInput,
 
   private def beforeSecondMessage(r: BigInteger): Receive = {
     case RandomChallenge(challenge) =>
-      require(challenge.length * 8 == commonInput.protocolParams.soundness, "wrong challenge length")
+      require(challenge.bytes.length * 8 == commonInput.protocolParams.soundness, "wrong challenge length")
 
       //Compute z = (r+ew) mod q
       val q: BigInteger = dlog.getOrder
-      val e: BigInteger = new BigInteger(1, challenge)
+      val e: BigInteger = new BigInteger(1, challenge.bytes)
       val ew: BigInteger = e.multiply(w).mod(q)
       val z: BigInteger = r.add(ew).mod(q)
       verifierActor ! SecondMessage(new SigmaBIMsg(z))

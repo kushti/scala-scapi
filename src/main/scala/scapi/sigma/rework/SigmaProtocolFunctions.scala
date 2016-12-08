@@ -3,7 +3,6 @@ package scapi.sigma.rework
 import java.security.SecureRandom
 
 import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.utility.SigmaProtocolMsg
-import scapi.sigma.rework.SigmaProtocol.Challenge
 
 /*
   Abstracting Sigma protocols
@@ -18,20 +17,23 @@ import scapi.sigma.rework.SigmaProtocol.Challenge
 
 //todo: implement ring signature protocol of Groth et al.
 
-trait ProverMessage {
+trait TranscriptMessage {
   def bytes: Array[Byte]
 }
 
+trait ProverMessage extends TranscriptMessage
+
+trait VerifierMessage extends TranscriptMessage
+
 trait FirstProverMessage[SP <: SigmaProtocol[SP]] extends ProverMessage
+
+case class Challenge(override val bytes: Array[Byte]) extends VerifierMessage
+
 trait SecondProverMessage[SP <: SigmaProtocol[SP]] extends ProverMessage
 
-trait SigmaProtocol[SP <: SigmaProtocol[SP]]{
+trait SigmaProtocol[SP <: SigmaProtocol[SP]] {
   type A <: FirstProverMessage[SP]
   type Z <: SecondProverMessage[SP]
-}
-
-object SigmaProtocol{
-  type Challenge = Array[Byte]
 }
 
 
@@ -56,7 +58,7 @@ trait Prover[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP], PI <: 
 trait InteractiveProver[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP], PI <: SigmaProtocolPrivateInput[SP]]
   extends Prover[SP, CI, PI]
 
-trait SimulatingProver[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP]]{
+trait SimulatingProver[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP]] {
   val challenge: Challenge
 }
 
@@ -66,6 +68,7 @@ trait ZeroKnowledgeProofOfKnowledge[SP <: SigmaProtocol[SP]]
 trait FiatShamir {
   def askOracleInstantiation(ask: Array[Byte]): Array[Byte]
 }
+
 trait NonInteractiveProver[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP], PI <: SigmaProtocolPrivateInput[SP]]
   extends Prover[SP, CI, PI] with FiatShamir
 
@@ -77,26 +80,27 @@ trait SigmaSignature[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP]
 }
 
 trait Verifier[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP]] extends Party[SP, CI] {
-  def challenge = {
+  def challenge = Challenge({
     require(publicInput.soundness % 8 == 0, "soundness must be fit in bytes")
     val ch = new Array[Byte](publicInput.soundness / 8)
     new SecureRandom().nextBytes(ch) //modifies ch
     ch
-  }
+  })
 }
 
 /**
   * Sigma Protocol transcript enough for verification
+  *
   * @tparam SP
   * @tparam CI
   * @tparam FM
   * @tparam SM
   */
 trait SigmaProtocolTranscript[
-  SP <: SigmaProtocol[SP],
-  CI <: SigmaProtocolCommonInput[SP],
-  FM <: FirstProverMessage[SP],
-  SM <: SecondProverMessage[SP]
+SP <: SigmaProtocol[SP],
+CI <: SigmaProtocolCommonInput[SP],
+FM <: FirstProverMessage[SP],
+SM <: SecondProverMessage[SP]
 ] {
 
   val x: CI
@@ -107,7 +111,6 @@ trait SigmaProtocolTranscript[
 
   def accepted: Boolean
 }
-
 
 
 object SigmaProtocolFunctions {

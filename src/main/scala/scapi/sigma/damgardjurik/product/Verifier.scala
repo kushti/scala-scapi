@@ -4,6 +4,7 @@ import java.math.BigInteger
 import java.security.SecureRandom
 
 import akka.actor.Actor
+import scapi.sigma.rework.Challenge
 import scapi.sigma.rework.SigmaProtocolFunctions.RandomChallenge
 
 
@@ -20,7 +21,7 @@ class Verifier(protocolParams: ProtocolParams, commonInput: CommonInput) extends
   override def receive: Receive = {
     case f: SigmaDJProductFirstMsg =>
       firstMessage = Some(f)
-      sender() ! RandomChallenge(challenge)
+      sender() ! RandomChallenge(Challenge(challenge))
 
     case s: SigmaDJProductSecondMsg =>
       val isProduct = verify(commonInput, firstMessage.get, s, challenge)
