@@ -1,5 +1,7 @@
 package scapi.sigma.rework
 
+import java.math.BigInteger
+
 import edu.biu.scapi.primitives.dlog.{DlogGroup, ECElementSendableData, GroupElement}
 
 
@@ -8,6 +10,8 @@ object DLogProtocol {
 
   case class DlogCommonInput(dlogGroup: DlogGroup, h: GroupElement, override val soundness: Int)
     extends SigmaProtocolCommonInput[DLogSigmaProtocol]
+
+  case class DlogProverInput(w: BigInteger) extends SigmaProtocolPrivateInput[DLogSigmaProtocol]
 
   case class FirstDLogProverMessage(a: GroupElement) extends FirstProverMessage[DLogSigmaProtocol] {
     override def bytes: Array[Byte] = a.generateSendableData() match {
