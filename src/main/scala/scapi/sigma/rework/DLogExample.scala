@@ -1,17 +1,24 @@
 package scapi.sigma.rework
 
-import edu.biu.scapi.primitives.dlog.GroupElement
+import edu.biu.scapi.primitives.dlog.{ECElementSendableData, GroupElement}
 
 
 object DLogProtocol {
   class DLogSigmaProtocol extends SigmaProtocol[DLogSigmaProtocol]
 
   case class FirstDLogProverMessage(a: GroupElement) extends FirstProverMessage[DLogSigmaProtocol] {
-    override def bytes: Array[Byte] = ???
+    override def bytes: Array[Byte] = a.generateSendableData() match {
+      case ed: ECElementSendableData =>
+        val x = ed.getX.toByteArray
+        val y = ed.getY.toByteArray
+
+        Array(x.size.toByte, y.size.toByte) ++  x ++ y
+      case _ => ???
+    }
   }
 
   case class SecondDLogProverMessage(z: BigInt) extends SecondProverMessage[DLogSigmaProtocol] {
-    override def bytes: Array[Byte] = ???
+    override def bytes: Array[Byte] = z.toByteArray
   }
 
 }
