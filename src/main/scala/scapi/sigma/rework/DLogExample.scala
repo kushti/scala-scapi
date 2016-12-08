@@ -1,10 +1,13 @@
 package scapi.sigma.rework
 
-import edu.biu.scapi.primitives.dlog.{ECElementSendableData, GroupElement}
+import edu.biu.scapi.primitives.dlog.{DlogGroup, ECElementSendableData, GroupElement}
 
 
 object DLogProtocol {
   class DLogSigmaProtocol extends SigmaProtocol[DLogSigmaProtocol]
+
+  case class DlogCommonInput(dlogGroup: DlogGroup, h: GroupElement, override val soundness: Int)
+    extends SigmaProtocolCommonInput[DLogSigmaProtocol]
 
   case class FirstDLogProverMessage(a: GroupElement) extends FirstProverMessage[DLogSigmaProtocol] {
     override def bytes: Array[Byte] = a.generateSendableData() match {
