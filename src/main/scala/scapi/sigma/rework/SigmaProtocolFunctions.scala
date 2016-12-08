@@ -36,7 +36,6 @@ trait SigmaProtocol[SP <: SigmaProtocol[SP]] {
   type Z <: SecondProverMessage[SP]
 }
 
-case class Transcript[SP <: SigmaProtocol[SP]](firstProverMessage: SP#A, challenge: Challenge, secondProverMessage: SP#Z)
 
 trait SigmaProtocolCommonInput[SP <: SigmaProtocol[SP]] {
   val soundness: Int
@@ -97,21 +96,16 @@ trait Verifier[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP]] exte
   *
   * @tparam SP
   * @tparam CI
-  * @tparam FM
-  * @tparam SM
   */
 trait SigmaProtocolTranscript[
 SP <: SigmaProtocol[SP],
-CI <: SigmaProtocolCommonInput[SP],
-FM <: FirstProverMessage[SP],
-SM <: SecondProverMessage[SP]
-] {
+CI <: SigmaProtocolCommonInput[SP]] {
 
   val x: CI
 
-  val a: FM
+  val a: SP#A
   val e: Challenge
-  val z: SM
+  val z: SP#Z
 
   def accepted: Boolean
 }
