@@ -2,6 +2,7 @@ package scapi.sigma.rework
 
 import java.security.SecureRandom
 
+import akka.actor.{Actor, ActorLogging}
 import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.utility.SigmaProtocolMsg
 
 /*
@@ -50,16 +51,52 @@ trait Party[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP]] {
   val publicInput: CI
 }
 
+//implement it as a FSM-DSL waitfor - then - action - then - waitfor - etc
+trait InteractiveParty
 
-trait Prover[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP], PI <: SigmaProtocolPrivateInput[SP]] extends Party[SP, CI] {
-  val privateInput: PI
+trait ActorParty extends InteractiveParty with Actor with ActorLogging {
+  def waitFor[T](handler: T => Receive): Receive = {
+    case t: T =>
+      context become handler(t)
+  }
+
+  def finished: Receive = {
+    case a: Any => log.warning(s"Prover has finished its job, but $a signal got")
+  }
 }
 
+trait Prover[SP <: SigmaProtocol[SP],
+CI <: SigmaProtocolCommonInput[SP],
+PI <: SigmaProtocolPrivateInput[SP]] extends Party[SP, CI] {
+  val privateInput: PI
+
+  def firstMessage: SP#A
+
+  def secondMessage(challenge: Challenge): SP#Z
+}
+
+
 trait InteractiveProver[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP], PI <: SigmaProtocolPrivateInput[SP]]
-  extends Prover[SP, CI, PI]
+  extends Prover[SP, CI, PI] with InteractiveParty
 
 trait ActorProver[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP], PI <: SigmaProtocolPrivateInput[SP]]
-  extends InteractiveProver[SP, CI, PI]
+  extends InteractiveProver[SP, CI, PI] with ActorParty {
+
+  import ActorProver._
+
+  override def receive: Receive = waitFor[StartInteraction.type] { _ =>
+    sender() ! firstMessage
+
+    waitFor[Challenge] { e: Challenge =>
+      sender() ! secondMessage(e)
+      finished
+    }
+  }
+}
+
+object ActorProver {
+  case object StartInteraction
+}
 
 trait SimulatingProver[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP]] {
   val challenge: Challenge
@@ -122,4 +159,5 @@ object SigmaProtocolFunctions {
   case object StartInteraction
 
   case class Transcript(a: SigmaProtocolMsg, e: Challenge, z: SigmaProtocolMsg, accepted: Boolean)
+
 }
