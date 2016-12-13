@@ -79,6 +79,8 @@ PI <: SigmaProtocolPrivateInput[SP]] extends Party[SP, CI] {
 trait InteractiveProver[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP], PI <: SigmaProtocolPrivateInput[SP]]
   extends Prover[SP, CI, PI] with InteractiveParty
 
+//todo: test
+//todo: timeout?
 trait ActorProver[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP], PI <: SigmaProtocolPrivateInput[SP]]
   extends InteractiveProver[SP, CI, PI] with ActorParty {
 
