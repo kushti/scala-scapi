@@ -61,4 +61,6 @@ object DLogProtocol {
   case class DLogActorProver(override val publicInput: DlogCommonInput, override val privateInput: DlogProverInput)
     extends DlogProver(publicInput, privateInput) with ActorProver[DLogSigmaProtocol, DlogCommonInput, DlogProverInput]
 
+
+  class DlogVerifier
 }

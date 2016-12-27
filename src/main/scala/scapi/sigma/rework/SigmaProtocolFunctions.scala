@@ -5,6 +5,8 @@ import java.security.SecureRandom
 import akka.actor.{Actor, ActorLogging}
 import edu.biu.scapi.interactiveMidProtocols.sigmaProtocol.utility.SigmaProtocolMsg
 
+import scala.concurrent.Future
+
 /*
   Abstracting Sigma protocols
   Functionality to get:
@@ -122,12 +124,19 @@ trait SigmaSignature[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP]
 }
 
 trait Verifier[SP <: SigmaProtocol[SP], CI <: SigmaProtocolCommonInput[SP]] extends Party[SP, CI] {
+  type P <: Prover[SP, CI, _]
+  type ST <: SigmaProtocolTranscript[SP, CI]
+
   def challenge = Challenge({
     require(publicInput.soundness % 8 == 0, "soundness must be fit in bytes")
     val ch = new Array[Byte](publicInput.soundness / 8)
     new SecureRandom().nextBytes(ch) //modifies ch
     ch
   })
+
+  def prover: P
+
+  def transcript: Future[Option[ST]]
 }
 
 /**
