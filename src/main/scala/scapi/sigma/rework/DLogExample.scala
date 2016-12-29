@@ -6,9 +6,13 @@ import java.security.SecureRandom
 import edu.biu.scapi.primitives.dlog.{DlogGroup, ECElementSendableData, GroupElement}
 import org.bouncycastle.util.BigIntegers
 
+import scala.concurrent.Future
+import scala.util.Try
+
 
 object DLogProtocol {
-  class DLogSigmaProtocol extends SigmaProtocol[DLogSigmaProtocol]{
+
+  class DLogSigmaProtocol extends SigmaProtocol[DLogSigmaProtocol] {
     override type A = FirstDLogProverMessage
     override type Z = SecondDLogProverMessage
   }
@@ -18,14 +22,12 @@ object DLogProtocol {
 
   case class DlogProverInput(w: BigInteger) extends SigmaProtocolPrivateInput[DLogSigmaProtocol]
 
-  case class FirstDLogProverMessage(a: GroupElement) extends FirstProverMessage[DLogSigmaProtocol] {
-    override def bytes: Array[Byte] = a.generateSendableData() match {
-      case ed: ECElementSendableData =>
-        val x = ed.getX.toByteArray
-        val y = ed.getY.toByteArray
+  case class FirstDLogProverMessage(ecData: ECElementSendableData) extends FirstProverMessage[DLogSigmaProtocol] {
+    override def bytes: Array[Byte] = {
+      val x = ecData.getX.toByteArray
+      val y = ecData.getY.toByteArray
 
-        Array(x.size.toByte, y.size.toByte) ++  x ++ y
-      case _ => ???
+      Array(x.size.toByte, y.size.toByte) ++ x ++ y
     }
   }
 
@@ -45,7 +47,7 @@ object DLogProtocol {
       val r = BigIntegers.createRandomInRange(BigInteger.ZERO, qMinusOne, new SecureRandom)
       rOpt = Some(r)
       val a = group.exponentiate(group.getGenerator, r)
-      FirstDLogProverMessage(a)
+      FirstDLogProverMessage(a.generateSendableData().asInstanceOf[ECElementSendableData])
     }
 
     override def secondMessage(challenge: Challenge): SecondDLogProverMessage = {
@@ -61,6 +63,29 @@ object DLogProtocol {
   case class DLogActorProver(override val publicInput: DlogCommonInput, override val privateInput: DlogProverInput)
     extends DlogProver(publicInput, privateInput) with ActorProver[DLogSigmaProtocol, DlogCommonInput, DlogProverInput]
 
+  case class DLogTranscript(override val x: DlogCommonInput,
+                            override val a: FirstDLogProverMessage,
+                            override val e: Challenge,
+                            override val z: SecondDLogProverMessage)
+    extends SigmaProtocolTranscript[DLogSigmaProtocol, DlogCommonInput] {
 
-  class DlogVerifier
+
+    override def accepted: Boolean = Try {
+      assert(x.dlogGroup.isMember(x.h))
+      val aElem = x.dlogGroup.reconstructElement(true, a.ecData)
+      val left = x.dlogGroup.exponentiate(x.dlogGroup.getGenerator, z.z.bigInteger)
+      val hToe = x.dlogGroup.exponentiate(x.h, BigInt(1, e.bytes).bigInteger)
+      val right = x.dlogGroup.multiplyGroupElements(aElem, hToe)
+
+      left == right
+    }.getOrElse(false)
+  }
+
+  class DlogVerifier(override val publicInput: DlogCommonInput, override val prover: DlogProver) extends Verifier[DLogSigmaProtocol, DlogCommonInput] {
+    override type P = DlogProver
+    override type ST = DLogTranscript
+
+    override def transcript: Future[Option[DlogVerifier.this.type]] = ???
+  }
+
 }
